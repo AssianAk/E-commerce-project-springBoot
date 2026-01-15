@@ -5,16 +5,15 @@ WORKDIR /build
 COPY pom.xml .
 COPY src ./src
 
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests \
+ && cp target/*SNAPSHOT.jar /build/app.jar
+
 
 # ---------- Stage 2: Runtime ----------
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Copy ALL jars to /app
-COPY --from=build /build/target/*.jar /app/
-
-# Run the Spring Boot jar (ignore .original)
-ENTRYPOINT ["sh","-c","java -jar $(ls /app/*.jar | grep -v original)"]
+COPY --from=build /build/app.jar /app/app.jar
 
 EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/app.jar"]
