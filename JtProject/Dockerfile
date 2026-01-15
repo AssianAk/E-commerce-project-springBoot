@@ -6,7 +6,8 @@ COPY pom.xml .
 COPY src ./src
 
 RUN mvn clean package -DskipTests \
- && cp target/*SNAPSHOT.jar /build/app.jar
+ && ls target \
+ && cp target/*.jar /build/app.jar
 
 
 # ---------- Stage 2: Runtime ----------
